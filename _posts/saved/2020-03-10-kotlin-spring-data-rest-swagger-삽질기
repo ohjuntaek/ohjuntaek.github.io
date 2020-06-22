@@ -1,8 +1,7 @@
 ---
 layout: post
-title: Kotlin Spring Data Rest Swagger 삽질기
+title: Kotlin Spring Data Rest Swagger
 category: coding
-tag: [spring, swagger, kotlin]
 ---
 
 코틀린 스프링과 spring-data-rest, swagger2를 이용해 rest api를 만들고 문서화 한 과정에서 삽질한 경험에 대한 글입니다.
