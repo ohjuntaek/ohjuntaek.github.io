@@ -1,0 +1,135 @@
+---
+layout: post
+title: Kotlin Spring Data Rest Swagger 삽질기
+category: coding
+tag: [spring, swagger, kotlin]
+---
+
+코틀린 스프링과 spring-data-rest, swagger2를 이용해 rest api를 만들고 문서화 한 과정에서 삽질한 경험에 대한 글입니다.
+
+[완성본 깃허브 링크](https://github.com/ohjuntaek/blog-repo/tree/master/demo)
+
+## 1. Kotlin Spring에서 Rest API 간단히 사용
+
+IntelliJ의 spring initializer를 통해 코틀린 스프링 프로젝트를 만들고, data-rest repository, hal-browser, h2를 사용해 로컬에서 rest api를 만들었습니다.
+
+사용한 의존성
+```
+implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+implementation("org.springframework.boot:spring-boot-starter-data-rest")
+implementation("org.springframework.boot:spring-boot-starter-web")
+implementation("org.springframework.data:spring-data-rest-hal-browser")
+```
+
+작성한 코드
+
+```kotlin
+
+@Entity
+data class Plan(
+        @Id
+        @GeneratedValue(strategy = GenerationType.AUTO)
+        var id: Long? = null,
+        var title : String? = null,
+        var content : String? = null,
+        var startTime : LocalDateTime? = null,
+        var endTime : LocalDateTime? = null
+)
+
+@Repository
+interface PlanRepository : JpaRepository<Plan, Long> {
+}
+
+```
+
+이렇게 간단히 plan에 대한 crud api를 만들려 했지만...
+
+```
+spring data rest  error creating bean with name 'repositoryController' defined in URL ....
+```
+
+라는 빈 생성 오류가 계속 생겨서 한참 헤맸네요. 인텔리제이에서 뭔가 누르다 보니 코틀린 스프링을 자바 스프링으로 변환했었는지 Application.kt의 코드가 자바 스프링 형식으로 바뀌어 있었습니다.  
+프로젝트를 새로 만들어서 똑같이 하니깐 해결 됐네요😢
+
+결과 화면  
+![생성된 hal-broswer](https://github.com/ohjuntaek/ohjuntaek.github.io/blob/master/_posts/resources/200310_hal_browser.PNG?raw=true)
+
+api를 만들고 문서화까지 할 수 있는 가장 간단한 방법인 것 같습니다.
+
+## 2. swagger2 간단히 적용
+
+[Swagger 공식 문서](https://springfox.github.io/springfox/docs/current/)
+
+[Swagger 적용-baeldung](https://www.baeldung.com/swagger-2-documentation-for-spring-rest-api)
+
+이 외에 많은 자료들을 봤지만, 이 두 자료가 가장 도움이 되었습니다.
+
+간단한 작업이지만 은근히 힘든 부분이 많았네요.
+
+### 이슈 1. 스프링 부트 버전 업그레이드에 따른 이슈
+
+https://stackoverflow.com/questions/58626347/springfox-swagger-not-working-in-spring-boot-2-2-0
+
+프로젝트에서 스프링 부트 2.2.5를 사용했는데 스웨거 문서에 나와있는 최신 릴리즈인 2.9.2에는 아직 뭔가 문제가 있나 보더라고요. 3.0.0-SNAPSHOT을 사용하니 해결됐습니다.
+
+### 이슈 2. Unable to infer base url
+
+https://stackoverflow.com/questions/47425048/why-does-springfox-swagger2-ui-tell-me-unable-to-infer-base-url
+
+3.0.0-SNAPSHOT으로 바꾸고 @EnableSwagger2WebMvc로 바꿨는데 위의 이슈가 발생했는데, springfox-webmvc 의존성을 추가하니 간단히 해결됐습니다.
+
+위의 이슈를 해결한 후 spring-data-rest에 해당하는 springfox-data-rest 의존성을 추가하여 작업을 완료했습니다.
+
+> (1) snapshot과 realase에 대한 차이의 이해
+[SW 라이브러리 이해](https://futurecreator.github.io/2018/09/09/software-versioning/)  
+> (2) gradle dsl에 대한 지식 (kotlin gradle dsl)
+[Gradle Kotlin Dsl 관련 정보](https://woowabros.github.io/tools/2019/04/30/gradle-kotlin-dsl.html)  
+>
+> 위의 두가지 개념을 몰랐기 때문에 해결하는데 시간이 엄청 오래 걸렸네요. 
+
+추가된 의존성들
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven("http://oss.jfrog.org/artifactory/oss-snapshot-local/") // 이 부분에서 maven repo를 추가하는 문법을 몰라서 한참 해맸습니다.
+}
+dependencies {
+    ... 
+    // Swagger (API Document)
+    implementation("io.springfox:springfox-swagger2:3.0.0-SNAPSHOT")
+    implementation("io.springfox:springfox-swagger-ui:3.0.0-SNAPSHOT")
+    implementation("io.springfox:springfox-spring-webmvc:3.0.0-SNAPSHOT") // webmvc
+    implementation("io.springfox:springfox-data-rest:3.0.0-SNAPSHOT")
+    ...
+}
+```
+
+스웨거 설정 코드
+
+```kotlin
+@Configuration
+@EnableSwagger2WebMvc
+@Import(SpringDataRestConfiguration::class)
+class SwaggerConfig {
+    @Bean
+    fun planApi(): Docket {
+        return Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.any())
+                .paths(PathSelectors.any())
+                .build()
+    }
+}
+
+```
+
+결과 화면
+
+![Swagger2 UI](https://github.com/ohjuntaek/ohjuntaek.github.io/blob/master/_posts/resources/200310_swagger.PNG?raw=true)
+
+## 총평
+
+- 간단하기는 hal-browser가 훨씬 간단하고 공부할 것도 적었습니다. spring initializer에서 체크만 하면 되니 버전별 대응 문제도 없을 것 같네요.
+- 확실히 Swagger가 ui가 훨씬 이쁘고 눈에 잘 들어오긴 합니다. 공식 문서 보면 설정하는 것도 많아보여서 더 확장성 있게 느껴지긴 했는데... 최신 버전 대응하기가 너무 힘들었네요. 장단점이 있는거 같습니다.
+- 에러 잡을 때 한국어로 된 자료가 없어서 힘들었네요. 혹시 이게 도움이 될 수도?
