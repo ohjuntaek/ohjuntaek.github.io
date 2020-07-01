@@ -16,12 +16,19 @@ plainwhite:
   sitemap: true # set to true to generate sitemap.xml content
   search: true # set to true to enable searchbar
   dark_mode: true # set to true to add dark mode toggle
+  disqus_shortname: JuneTaek Oh
+  show_excerpts: true
+  navigation:
+  - title: daily
+    url: "/daliy"
+  - title: Resume
+    url: "/resume"
 
   # generate social links in footer
   social_links:
-    twitter: thelehhman
-    github:  thelehhman
-    linkedIn: in/thelehhman
+    # twitter: thelehhman
+    github:  ohjuntaek
+    # linkedIn: in/thelehhman
     rss: rss
     # dribbble: jekyll
     # flickr:   jekyll
@@ -46,6 +53,7 @@ plainwhite:
 
 # Build settings
 theme: plainwhite
+remote_theme: thelehhman/plainwhite-jekyll
 
 plugins:
   - jekyll-seo-tag
