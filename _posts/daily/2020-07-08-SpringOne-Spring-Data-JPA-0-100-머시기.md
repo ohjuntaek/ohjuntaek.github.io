@@ -11,24 +11,25 @@ date: 2020-07-08
 
 - using spring data jpa
 - would like start story
-- ![normal bike ](2020-07-08-19-30-11.png)
+- ![normal bike ](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-19-30-11.png)
 - BMX bike, but normal bike. take bikes apart
 - 머시기 부품 버리고 뜯고... 저 뾰족 튀어나온게 뭐에 쓰는지 몰라서 버렸다는 건지 뭔지
 - 어쨌든 그게 사실은 coaster brake 하는데 필요한 건데 뭐 몰랐다... 이런 애기를 하는데 왜하냐
 - 스프링 데이터 jpa 쓰는 넘들 스택오버플로우 보니깐 내가 받은 인상은 지들이 뭐하는지 모른다는 거다.
 - 그래서 기초부터 하겠다..
 - has tricky questions 
-- ![person](2020-07-08-19-43-57.png)
+- ![person](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-19-43-57.png)
 - @Version : Optimistic locking
-- ![](2020-07-08-createPerson.png)
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-createPerson.png)
 - 뭐라는거야... 아니 주석 친곳에서 디비에 select count(*) 날리면 항상 1이 나올거냐? 라고 묻는다.
 - > 아... 헷갈리네 플러쉬할때 1 나올텐데 저 jpql 쏘면 플러쉬 날리니깐 3번째에서만 1이 나올거 같은데?
 - 맞네... 뭐 delayed writing 땜에 그렇단다. 최대한 늦게 디비에 쏜다. 1차 캐시에 id 조회하니깐 이미 있는 넘이네? 하면 안가져온다~ 
 - 근데 마지막엔 왜 가져오냐? 저 jpql 보내는거는 jpa는 아무것도 모른다 그냥 jpql 번역해서 db에 쏘니깐 당연히 하기전에 플러쉬 나간단다.
-- ![](2020-07-08-19-59-52.png)
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-19-59-52.png)
 - setName 쓰면 과연 Person이 바뀔까? 당연히 바뀌지 트랜잭션 끝나면~
 
-- ![](2020-07-08-20-04-47.png)
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-20-04-47.png)
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-20-54-25.png)
 - 자 위에 보면 hobby가 매니투매니로 걸려있지? address는 원투원으로... 이거 위처럼 읽으면 어떻게 될까?
 - 레이지 로딩 익셉션이 발생한다! 왜? 모르겠는데 이거는... 하비랑 어드레스 cascade로 조회할 때 안가져오나??
 - 아하 이게 트랜잭션 밖이였지 근데 매니투매니는 기본적으로 레이지니깐 발생하겠네.
