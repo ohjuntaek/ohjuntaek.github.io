@@ -38,6 +38,29 @@ date: 2020-07-08
 
 What does Spring Data JPA do for you?
 
+- do i need repository for every entity? no, exactly you need repositoy every aggregate.
+- 목요일에 다시 ddd에 대해 말해준단다.
+
+Query Derivation
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기_091410.png)
+- findByFirstName 이건 많이 봤는데 뒤에는 참 신기하네
+- 보고 이해할 수 있지만 딱봐도 너무 복잡함
+
+Query Annotation
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기_091745.png)
+
+- \# 이건 뭐냐? 객체 파라미터 넣는건가? `#{} 로 쓰는건가...
+
+Page
+- Pageable, Page 써라~
+- Slice는 total 없는거다
+
+Projections
+- ![](/assets/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기/2020-07-08-SpringOne-Spring-Data-JPA-0-100-머시기_092941.png)
+- 헐 이게 된다고?
+
+
+
 ### 총평
 
 - 다 아는건데도 불구 알아듣는거 너무 오래걸림... 영어 공부 좀 하자
